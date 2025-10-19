@@ -4,14 +4,13 @@
   "description": "تطبيق الدردشة الاجتماعية - تم التطوير بواسطة عبد الوهاب الريمي",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "python3 -m http.server 3000",
+    "build": "echo 'No build process needed for static site'"
   },
   "keywords": ["chat", "social", "arabic", "دردشة"],
   "author": "عبد الوهاب الريمي",
   "license": "MIT",
-  "devDependencies": {
-    "vite": "^4.4.5"
+  "engines": {
+    "node": ">=18"
   }
 }

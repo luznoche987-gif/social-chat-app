@@ -1,12 +1,8 @@
 {
   "version": 2,
   "name": "social-chat-app",
-  "builds": [
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
-    }
-  ],
+  "buildCommand": null,
+  "outputDirectory": ".",
   "routes": [
     {
       "src": "/(.*)",
