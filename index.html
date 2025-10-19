@@ -1,0 +1,2600 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Chat App - تطبيق الدردشة الاجتماعية</title>
+    <meta name="description" content="تطبيق دردشة اجتماعية متكامل - تم التطوير بواسطة عبد الوهاب الريمي">
+    <meta name="author" content="عبد الوهاب الريمي">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --primary-dark: #0056b3;
+            --light-bg: #f0f2f5;
+            --white: #fff;
+            --gray-light: #eee;
+            --gray: #ccc;
+            --gray-dark: #666;
+            --success: #d1e7dd;
+            --warning: #fff3cd;
+            --danger: #f8d7da;
+            --danger-dark: #dc3545;
+            --gold: #ffd700;
+            --developer-color: #2c3e50;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            height: 90vh;
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .header {
+            padding: 15px 20px;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .app-title {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .developer-credit {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .developer-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 5px rgba(255,255,255,0.5);
+            }
+            to {
+                box-shadow: 0 0 10px rgba(255,255,255,0.8);
+            }
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .online-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4CAF50;
+            margin-left: 5px;
+        }
+
+        .logout-btn, .settings-btn {
+            background: var(--danger-dark) !important;
+            width: auto !important;
+            padding: 5px 10px !important;
+            border-radius: 5px !important;
+            font-size: 0.8rem !important;
+        }
+
+        .settings-btn {
+            background: #6c757d !important;
+            margin-left: 5px;
+        }
+
+        .language-switcher {
+            background: rgba(255,255,255,0.2) !important;
+            margin-left: 5px;
+            font-size: 0.8rem !important;
+            padding: 5px 10px !important;
+            border-radius: 5px !important;
+        }
+
+        .messages-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.05"><path d="M0 0h100v100H0z" fill="none"/><path d="M20 20h60v60H20z" stroke="%23000" fill="none"/></svg>');
+        }
+
+        .message {
+            padding: 12px 15px;
+            border-radius: 18px;
+            max-width: 75%;
+            position: relative;
+            word-break: break-word;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .message.sent {
+            background: var(--primary-color);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.received {
+            background: var(--gray-light);
+            color: #333;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-info {
+            font-size: 0.7rem;
+            opacity: 0.8;
+            margin-top: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .message.sent .message-info {
+            text-align: left;
+        }
+
+        .message.received .message-info {
+            text-align: right;
+        }
+
+        .message img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-top: 5px;
+            cursor: pointer;
+        }
+
+        .audio-message {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-container {
+            padding: 15px;
+            background: var(--gray-light);
+            border-top: 1px solid var(--gray);
+            display: flex;
+            gap: 10px;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px 15px;
+            border-radius: 25px;
+            border: 1px solid var(--gray);
+            outline: none;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .message-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            width: 45px;
+            height: 45px;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn.recording {
+            background: var(--danger-dark);
+            animation: pulse 1.5s infinite;
+        }
+
+        .send-btn {
+            background: #28a745 !important;
+        }
+
+        .send-btn:hover {
+            background: #218838 !important;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* نماذج التسجيل والدخول */
+        .auth-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .auth-form {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .developer-watermark {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--gray-dark);
+            padding: 5px;
+            background: rgba(0,0,0,0.03);
+            border-radius: 5px;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .auth-header h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+
+        .developer {
+            color: var(--gray-dark);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .developer-signature {
+            font-weight: bold;
+            color: var(--developer-color);
+            position: relative;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .auth-form h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid var(--gray);
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+
+        .phone-input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .country-code {
+            width: 120px;
+            flex-shrink: 0;
+        }
+
+        .phone-number {
+            flex: 1;
+        }
+
+        .btn-block {
+            width: 100%;
+            border-radius: 5px;
+            padding: 12px;
+            margin-top: 10px;
+            border: none;
+            background: var(--primary-color);
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-block:hover {
+            background: var(--primary-dark);
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--gray);
+        }
+
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .auth-tab.active {
+            border-bottom-color: var(--primary-color);
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .typing-indicator {
+            font-style: italic;
+            color: var(--gray-dark);
+            padding: 5px 15px;
+            font-size: 0.9rem;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            z-index: 1001;
+            transform: translateX(150%);
+            transition: transform 0.3s;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: var(--danger-dark);
+        }
+
+        .notification.success {
+            background: #28a745;
+        }
+
+        .notification.warning {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .notification.info {
+            background: #17a2b8;
+        }
+
+        /* قائمة الرسالة */
+        .message-menu {
+            position: absolute;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 10;
+            overflow: hidden;
+            min-width: 180px;
+        }
+
+        .message-menu button {
+            width: 100%;
+            padding: 10px 15px;
+            border: none;
+            background: white;
+            text-align: right;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .message-menu button:hover {
+            background: var(--gray-light);
+        }
+
+        .message-menu button.report {
+            color: var(--danger-dark);
+        }
+
+        .message-menu button.private {
+            color: var(--primary-color);
+        }
+
+        /* تذييل الصفحة */
+        .footer {
+            background: var(--gray-light);
+            padding: 10px 20px;
+            text-align: center;
+            border-top: 1px solid var(--gray);
+            font-size: 0.8rem;
+            color: var(--gray-dark);
+            position: relative;
+        }
+
+        .footer strong {
+            color: var(--primary-color);
+        }
+
+        .footer-developer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .footer-developer-badge {
+            background: var(--developer-color);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* تصميم معلومات الحساب */
+        .account-info {
+            background: var(--success);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 1px solid #badbcc;
+        }
+
+        .account-info h4 {
+            margin-bottom: 10px;
+            color: #0f5132;
+            text-align: center;
+        }
+
+        .credentials {
+            background: #e7f3ff;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 12px 0;
+            border-right: 4px solid var(--primary-color);
+        }
+
+        .credentials p {
+            margin: 8px 0;
+            font-family: monospace;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        .whatsapp-btn {
+            background: #25D366 !important;
+            color: white !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 8px !important;
+            width: 100% !important;
+            padding: 12px 15px !important;
+            border-radius: 8px !important;
+            margin: 15px 0 !important;
+            font-size: 1rem !important;
+        }
+
+        .whatsapp-btn:hover {
+            background: #128C7E !important;
+        }
+
+        .password-strength {
+            margin-top: 5px;
+            font-size: 0.8rem;
+        }
+
+        .strength-weak { color: #dc3545; }
+        .strength-medium { color: #ffc107; }
+        .strength-strong { color: #28a745; }
+
+        /* الميكروفون المشترك */
+        .shared-microphone-container {
+            background: var(--white);
+            padding: 15px;
+            border-bottom: 1px solid var(--gray);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .shared-microphone-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .shared-microphone-title {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .shared-microphone-status {
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            border-radius: 12px;
+            background: var(--gray-light);
+        }
+
+        .shared-microphone-status.active {
+            background: var(--success);
+            color: white;
+        }
+
+        .shared-microphone-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .shared-microphone-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 20px;
+            background: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+
+        .shared-microphone-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .shared-microphone-btn.stop {
+            background: var(--danger-dark);
+        }
+
+        .shared-microphone-btn.stop:hover {
+            background: #c82333;
+        }
+
+        .shared-microphone-visualizer {
+            flex: 1;
+            height: 20px;
+            background: var(--gray-light);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .shared-microphone-level {
+            height: 100%;
+            background: var(--primary-color);
+            width: 0%;
+            transition: width 0.1s;
+        }
+
+        .shared-audio-players {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .shared-audio-player {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            background: var(--gray-light);
+            border-radius: 8px;
+        }
+
+        .shared-audio-player-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .shared-audio-player-name {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .shared-audio-player-status {
+            font-size: 0.7rem;
+            color: var(--gray-dark);
+        }
+
+        .shared-audio-player-controls {
+            display: flex;
+            gap: 5px;
+        }
+
+        .shared-audio-player-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        /* صفحة الإعدادات */
+        .settings-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .settings-section {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .settings-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-item-info {
+            flex: 1;
+        }
+
+        .settings-item-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .settings-item-description {
+            font-size: 0.8rem;
+            color: var(--gray-dark);
+        }
+
+        .settings-item-control {
+            margin-left: 15px;
+        }
+
+        /* التبديل */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* أزرار الإعدادات */
+        .settings-btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .settings-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .settings-btn.primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .settings-btn.danger {
+            background: var(--danger-dark);
+            color: white;
+        }
+
+        .settings-btn.secondary {
+            background: var(--gray);
+            color: white;
+        }
+
+        .settings-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        /* نماذج الأمان */
+        .security-form {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .security-code-input {
+            text-align: center;
+            font-size: 1.5rem;
+            letter-spacing: 10px;
+            font-weight: bold;
+        }
+
+        .countdown-timer {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--gray-dark);
+            margin-top: 10px;
+        }
+
+        .resend-code {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .resend-code button {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .resend-code button:disabled {
+            color: var(--gray);
+            cursor: not-allowed;
+        }
+
+        /* التمرير المخصص */
+        .messages-container::-webkit-scrollbar,
+        .settings-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .messages-container::-webkit-scrollbar-track,
+        .settings-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .messages-container::-webkit-scrollbar-thumb,
+        .settings-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        .messages-container::-webkit-scrollbar-thumb:hover,
+        .settings-container::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* تصميم متجاوب */
+        @media (max-width: 600px) {
+            .container {
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+                padding: 10px 15px;
+            }
+            
+            .header-content {
+                align-items: center;
+            }
+            
+            .developer-credit {
+                font-size: 0.7rem;
+            }
+            
+            .message {
+                max-width: 85%;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 40px;
+                height: 40px;
+                padding: 8px;
+            }
+            
+            .auth-header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .developer {
+                font-size: 0.8rem;
+            }
+            
+            .auth-form {
+                padding: 20px;
+                margin: 20px;
+            }
+
+            .phone-input-group {
+                flex-direction: column;
+            }
+
+            .country-code {
+                width: 100%;
+            }
+            
+            .shared-microphone-controls {
+                flex-direction: column;
+            }
+            
+            .shared-microphone-visualizer {
+                width: 100%;
+            }
+            
+            .settings-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .settings-item-control {
+                margin-left: 0;
+                align-self: flex-end;
+            }
+        }
+
+        /* دعم الأجهزة التي تفضل الوضع الداكن */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --light-bg: #1a1a1a;
+                --white: #2d2d2d;
+                --gray-light: #3d3d3d;
+                --gray: #555;
+                --gray-dark: #ccc;
+            }
+            
+            body {
+                color: #e0e0e0;
+            }
+            
+            .form-control {
+                background: #3d3d3d;
+                color: #e0e0e0;
+                border-color: #555;
+            }
+            
+            .message.received {
+                background: #3d3d3d;
+                color: #e0e0e0;
+            }
+            
+            .auth-form {
+                background: #2d2d2d;
+                color: #e0e0e0;
+            }
+            
+            .settings-section {
+                background: #2d2d2d;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- نموذج التسجيل والدخول -->
+    <div id="authModal" class="auth-modal">
+        <div class="auth-form">
+            <div class="auth-header">
+                <h1 data-lang="app_title">💬 تطبيق الدردشة</h1>
+                <p class="developer" data-lang="developed_by">
+                    <span>تم التطوير بواسطة:</span>
+                    <span class="developer-signature">عبد الوهاب الريمي</span>
+                </p>
+            </div>
+            <div class="auth-tabs">
+                <div class="auth-tab active" id="loginTab" onclick="switchAuthTab('login')" data-lang="login">تسجيل الدخول</div>
+                <div class="auth-tab" id="registerTab" onclick="switchAuthTab('register')" data-lang="register">إنشاء حساب</div>
+            </div>
+            
+            <div id="loginForm">
+                <h2 data-lang="welcome_back">مرحباً بعودتك 👋</h2>
+                <div class="form-group">
+                    <label for="loginPhone" data-lang="phone_number">رقم الهاتف</label>
+                    <div class="phone-input-group">
+                        <select id="loginCountryCode" class="form-control country-code">
+                            <!-- سيتم ملؤه بالجافاسكريبت -->
+                        </select>
+                        <input type="tel" id="loginPhone" class="form-control phone-number" data-lang-placeholder="enter_phone" placeholder="أدخل رقم الهاتف">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword" data-lang="password">كلمة المرور</label>
+                    <input type="password" id="loginPassword" class="form-control" data-lang-placeholder="enter_password" placeholder="أدخل كلمة المرور">
+                </div>
+                <button class="btn btn-block" onclick="login()" data-lang="login_to_chat">دخول للدردشة</button>
+                
+                <div class="form-group" style="text-align: center; margin-top: 15px;">
+                    <a href="#" onclick="showForgotPassword()" style="color: var(--primary-color); text-decoration: none;" data-lang="forgot_password">نسيت كلمة المرور؟</a>
+                </div>
+            </div>
+            
+            <div id="registerForm" class="hidden">
+                <h2 data-lang="join_us">انضم إلينا 🎉</h2>
+                <div class="form-group">
+                    <label for="registerName" data-lang="username">اسم المستخدم</label>
+                    <input type="text" id="registerName" class="form-control" data-lang-placeholder="enter_username" placeholder="أدخل اسم المستخدم">
+                </div>
+                <div class="form-group">
+                    <label for="registerPhone" data-lang="phone_number">رقم الهاتف</label>
+                    <div class="phone-input-group">
+                        <select id="registerCountryCode" class="form-control country-code">
+                            <!-- سيتم ملؤه بالجافاسكريبت -->
+                        </select>
+                        <input type="tel" id="registerPhone" class="form-control phone-number" data-lang-placeholder="enter_phone" placeholder="أدخل رقم الهاتف">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword" data-lang="password">كلمة المرور</label>
+                    <input type="password" id="registerPassword" class="form-control" data-lang-placeholder="create_password" placeholder="أنشئ كلمة المرور الخاصة بك" oninput="checkPasswordStrength(this.value)">
+                    <div id="passwordStrength" class="password-strength"></div>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword" data-lang="confirm_password">تأكيد كلمة المرور</label>
+                    <input type="password" id="confirmPassword" class="form-control" data-lang-placeholder="reenter_password" placeholder="أعد إدخال كلمة المرور">
+                </div>
+                <button class="btn btn-block" onclick="register()" data-lang="create_account">إنشاء حساب</button>
+            </div>
+            
+            <div class="developer-watermark">
+                تم التطوير بواسطة: <strong>عبد الوهاب الريمي</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- نموذج التحقق برمز التفعيل -->
+    <div id="activationModal" class="auth-modal hidden">
+        <div class="auth-form">
+            <div class="auth-header">
+                <h1 data-lang="account_confirmation">🔐 تأكيد الحساب</h1>
+                <p class="developer" data-lang="developed_by">
+                    <span>تم التطوير بواسطة:</span>
+                    <span class="developer-signature">عبد الوهاب الريمي</span>
+                </p>
+            </div>
+            
+            <div class="security-form">
+                <div class="form-group">
+                    <label for="activationInput" data-lang="enter_activation_code">أدخل رمز التفعيل</label>
+                    <input type="text" id="activationInput" class="form-control security-code-input" data-lang-placeholder="activation_code_placeholder" placeholder="ـــ ـــ ـــ" maxlength="6" oninput="formatActivationCode(this)">
+                    <div class="countdown-timer" id="countdownTimer" data-lang="resend_in">يمكنك إعادة الإرسال خلال: <span id="timer">60</span> ثانية</div>
+                </div>
+                
+                <div class="resend-code">
+                    <button id="resendCodeBtn" onclick="resendActivationCode()" disabled data-lang="resend_code_whatsapp">إعادة إرسال الرمز عبر واتساب</button>
+                </div>
+                
+                <button class="btn btn-block" onclick="activateAccount()" data-lang="activate_account">تفعيل الحساب</button>
+            </div>
+            
+            <div class="account-info" id="activationInfo">
+                <h4 data-lang="account_created">🎉 تم إنشاء حسابك بنجاح!</h4>
+                <p style="text-align: center; margin-top: 10px;" data-lang="activation_sent">
+                    تم إرسال رمز التفعيل إلى رقم هاتفك عبر واتساب
+                </p>
+            </div>
+            
+            <div class="developer-watermark">
+                تم التطوير بواسطة: <strong>عبد الوهاب الريمي</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- نموذج إعادة تعيين كلمة المرور -->
+    <div id="forgotPasswordModal" class="auth-modal hidden">
+        <div class="auth-form">
+            <div class="auth-header">
+                <h1 data-lang="reset_password">🔑 إعادة تعيين كلمة المرور</h1>
+                <p class="developer" data-lang="developed_by">
+                    <span>تم التطوير بواسطة:</span>
+                    <span class="developer-signature">عبد الوهاب الريمي</span>
+                </p>
+            </div>
+            
+            <div class="security-form">
+                <div id="resetStep1">
+                    <div class="form-group">
+                        <label for="resetPhone" data-lang="phone_number">رقم الهاتف</label>
+                        <div class="phone-input-group">
+                            <select id="resetCountryCode" class="form-control country-code">
+                                <!-- سيتم ملؤه بالجافاسكريبت -->
+                            </select>
+                            <input type="tel" id="resetPhone" class="form-control phone-number" data-lang-placeholder="enter_registered_phone" placeholder="أدخل رقم الهاتف المسجل">
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-block" onclick="sendPasswordResetCode()" data-lang="send_verification_whatsapp">إرسال رمز التحقق عبر واتساب</button>
+                </div>
+                
+                <div id="resetStep2" class="hidden">
+                    <div class="form-group">
+                        <label for="resetCode" data-lang="verification_code">رمز التحقق</label>
+                        <input type="text" id="resetCode" class="form-control security-code-input" data-lang-placeholder="verification_code_placeholder" placeholder="ـــ ـــ ـــ" maxlength="6" oninput="formatResetCode(this)">
+                        <div class="countdown-timer" data-lang="resend_in">يمكنك إعادة الإرسال خلال: <span id="resetTimer">60</span> ثانية</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newPassword" data-lang="new_password">كلمة المرور الجديدة</label>
+                        <input type="password" id="newPassword" class="form-control" data-lang-placeholder="enter_new_password" placeholder="أدخل كلمة المرور الجديدة">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmNewPassword" data-lang="confirm_new_password">تأكيد كلمة المرور الجديدة</label>
+                        <input type="password" id="confirmNewPassword" class="form-control" data-lang-placeholder="reenter_new_password" placeholder="أعد إدخال كلمة المرور الجديدة">
+                    </div>
+                    
+                    <button class="btn btn-block" onclick="resetPassword()" data-lang="set_new_password">تعيين كلمة المرور الجديدة</button>
+                    
+                    <div class="resend-code">
+                        <button id="resendResetCodeBtn" onclick="resendResetCode()" disabled data-lang="resend_code_whatsapp">إعادة إرسال الرمز عبر واتساب</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="developer-watermark">
+                تم التطوير بواسطة: <strong>عبد الوهاب الريمي</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- إشعارات -->
+    <div id="notification" class="notification"></div>
+
+    <!-- واجهة الدردشة الرئيسية -->
+    <div class="container hidden" id="chatContainer">
+        <div class="header">
+            <div class="header-content">
+                <div class="app-title" data-lang="chat_room">💬 غرفة الدردشة الاجتماعية</div>
+                <div class="developer-credit" data-lang="developed_by">
+                    <span>مطور بواسطة:</span>
+                    <div class="developer-badge">
+                        <span>👨‍💻</span>
+                        <span>عبد الوهاب الريمي</span>
+                    </div>
+                </div>
+            </div>
+            <div class="user-info">
+                <span id="currentUser">مستخدم</span>
+                <div class="user-avatar" id="userAvatar">م</div>
+                <div class="online-indicator"></div>
+                <button class="btn language-switcher" onclick="toggleLanguage()" title="تبديل اللغة">🌐</button>
+                <button class="btn settings-btn" onclick="openSettings()" title="الإعدادات">⚙️</button>
+                <button class="btn logout-btn" onclick="logout()" title="تسجيل الخروج" data-lang="logout">خروج</button>
+            </div>
+        </div>
+        
+        <!-- الميكروفون المشترك -->
+        <div class="shared-microphone-container" id="sharedMicrophoneContainer">
+            <div class="shared-microphone-header">
+                <div class="shared-microphone-title" data-lang="shared_microphone">🎤 الميكروفون المشترك</div>
+                <div class="shared-microphone-status" id="sharedMicrophoneStatus" data-lang="inactive">غير نشط</div>
+            </div>
+            <div class="shared-microphone-controls">
+                <button class="shared-microphone-btn" id="startSharedMicrophoneBtn" onclick="startSharedMicrophone()">
+                    <span>▶️</span> <span data-lang="start_broadcast">بدء البث</span>
+                </button>
+                <button class="shared-microphone-btn stop hidden" id="stopSharedMicrophoneBtn" onclick="stopSharedMicrophone()">
+                    <span>⏹️</span> <span data-lang="stop_broadcast">إيقاف البث</span>
+                </button>
+                <div class="shared-microphone-visualizer">
+                    <div class="shared-microphone-level" id="sharedMicrophoneLevel"></div>
+                </div>
+            </div>
+            <div class="shared-audio-players" id="sharedAudioPlayers">
+                <!-- مشغلات الصوت ستظهر هنا -->
+            </div>
+        </div>
+        
+        <div class="messages-container" id="messages">
+            <!-- الرسائل ستعرض هنا -->
+        </div>
+        
+        <div class="typing-indicator hidden" id="typingIndicator"></div>
+        
+        <div class="input-container">
+            <input type="text" id="messageInput" class="message-input" data-lang-placeholder="type_message" placeholder="اكتب رسالتك هنا..." onkeypress="handleKeyPress(event)">
+            <div class="action-buttons">
+                <button class="btn" onclick="toggleImageUpload()" title="إرسال صورة">
+                    <span>📷</span>
+                    <input type="file" id="imageUpload" accept="image/*" class="hidden">
+                </button>
+                <button class="btn" id="recordButton" onclick="toggleRecording()" title="تسجيل صوتي">
+                    <span>🎤</span>
+                </button>
+                <button class="btn send-btn" onclick="sendMessage()" title="إرسال">
+                    <span>➤</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- تذييل الصفحة -->
+        <div class="footer">
+            <p data-lang="footer_text">تم تطوير هذا التطبيق بواسطة <strong>عبد الوهاب الريمي</strong> &copy; 2025</p>
+            <div class="footer-developer">
+                <div class="footer-developer-badge">
+                    <span>💻</span>
+                    <span>عبد الوهاب الريمي - مطور التطبيق</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ======= نظام اللغات =======
+        const languageData = {
+            ar: {
+                app_title: "💬 تطبيق الدردشة",
+                developed_by: "تم التطوير بواسطة:",
+                login: "تسجيل الدخول",
+                register: "إنشاء حساب",
+                welcome_back: "مرحباً بعودتك 👋",
+                phone_number: "رقم الهاتف",
+                enter_phone: "أدخل رقم الهاتف",
+                password: "كلمة المرور",
+                enter_password: "أدخل كلمة المرور",
+                login_to_chat: "دخول للدردشة",
+                forgot_password: "نسيت كلمة المرور؟",
+                join_us: "انضم إلينا 🎉",
+                username: "اسم المستخدم",
+                enter_username: "أدخل اسم المستخدم",
+                create_password: "أنشئ كلمة المرور الخاصة بك",
+                confirm_password: "تأكيد كلمة المرور",
+                reenter_password: "أعد إدخال كلمة المرور",
+                create_account: "إنشاء حساب",
+                account_confirmation: "🔐 تأكيد الحساب",
+                enter_activation_code: "أدخل رمز التفعيل",
+                activation_code_placeholder: "ـــ ـــ ـــ",
+                resend_in: "يمكنك إعادة الإرسال خلال:",
+                resend_code_whatsapp: "إعادة إرسال الرمز عبر واتساب",
+                activate_account: "تفعيل الحساب",
+                account_created: "🎉 تم إنشاء حسابك بنجاح!",
+                activation_sent: "تم إرسال رمز التفعيل إلى رقم هاتفك عبر واتساب",
+                reset_password: "🔑 إعادة تعيين كلمة المرور",
+                enter_registered_phone: "أدخل رقم الهاتف المسجل",
+                send_verification_whatsapp: "إرسال رمز التحقق عبر واتساب",
+                verification_code: "رمز التحقق",
+                verification_code_placeholder: "ـــ ـــ ـــ",
+                new_password: "كلمة المرور الجديدة",
+                enter_new_password: "أدخل كلمة المرور الجديدة",
+                confirm_new_password: "تأكيد كلمة المرور الجديدة",
+                reenter_new_password: "أعد إدخال كلمة المرور الجديدة",
+                set_new_password: "تعيين كلمة المرور الجديدة",
+                chat_room: "💬 غرفة الدردشة الاجتماعية",
+                logout: "خروج",
+                shared_microphone: "🎤 الميكروفون المشترك",
+                inactive: "غير نشط",
+                start_broadcast: "بدء البث",
+                stop_broadcast: "إيقاف البث",
+                type_message: "اكتب رسالتك هنا...",
+                footer_text: "تم تطوير هذا التطبيق بواسطة",
+                welcome_message: "مرحباً {name} في غرفة الدردشة!",
+                login_success: "تم تسجيل الدخول بنجاح!",
+                logout_success: "تم تسجيل الخروج بنجاح",
+                fill_all_fields: "الرجاء ملء جميع الحقول",
+                phone_invalid: "رقم الهاتف يجب أن يكون صحيحاً",
+                password_short: "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
+                passwords_not_match: "كلمات المرور غير متطابقة",
+                phone_registered: "رقم الهاتف مسجل مسبقاً",
+                no_pending_account: "لا يوجد حساب معلق لهذا الرقم",
+                phone_not_registered: "رقم الهاتف غير مسجل",
+                account_not_active: "الحساب غير مفعل. يرجى تفعيل الحساب أولاً",
+                account_banned: "الحساب محظور",
+                wrong_password: "كلمة المرور غير صحيحة",
+                account_locked: "الحساب مؤقتاً مقفل بسبب محاولات تسجيل دخول فاشلة متعددة. يرجى المحاولة لاحقاً.",
+                no_verification_code: "لم يتم إرسال رمز تحقق لهذا الرقم",
+                code_expired: "انتهت صلاحية رمز التحقق",
+                too_many_attempts: "تم تجاوز عدد المحاولات المسموح بها",
+                wrong_code: "رمز التحقق غير صحيح",
+                no_activation_data: "لا توجد بيانات تفعيل",
+                activation_success: "تم تفعيل الحساب بنجاح! يمكنك الآن تسجيل الدخول",
+                code_sent: "تم فتح واتساب لإرسال رمز التفعيل",
+                code_resent: "تم فتح واتساب لإعادة إرسال رمز التفعيل",
+                reset_success: "تم تعيين كلمة المرور الجديدة بنجاح",
+                password_strength: "قوة كلمة المرور:",
+                weak: "ضعيفة",
+                medium: "متوسطة",
+                strong: "قوية"
+            },
+            en: {
+                app_title: "💬 Chat App",
+                developed_by: "Developed by:",
+                login: "Login",
+                register: "Register",
+                welcome_back: "Welcome Back 👋",
+                phone_number: "Phone Number",
+                enter_phone: "Enter phone number",
+                password: "Password",
+                enter_password: "Enter password",
+                login_to_chat: "Enter Chat",
+                forgot_password: "Forgot password?",
+                join_us: "Join Us 🎉",
+                username: "Username",
+                enter_username: "Enter username",
+                create_password: "Create your password",
+                confirm_password: "Confirm Password",
+                reenter_password: "Re-enter password",
+                create_account: "Create Account",
+                account_confirmation: "🔐 Account Confirmation",
+                enter_activation_code: "Enter activation code",
+                activation_code_placeholder: "___ ___ ___",
+                resend_in: "You can resend in:",
+                resend_code_whatsapp: "Resend code via WhatsApp",
+                activate_account: "Activate Account",
+                account_created: "🎉 Your account has been created successfully!",
+                activation_sent: "Activation code has been sent to your phone via WhatsApp",
+                reset_password: "🔑 Reset Password",
+                enter_registered_phone: "Enter registered phone number",
+                send_verification_whatsapp: "Send verification code via WhatsApp",
+                verification_code: "Verification Code",
+                verification_code_placeholder: "___ ___ ___",
+                new_password: "New Password",
+                enter_new_password: "Enter new password",
+                confirm_new_password: "Confirm New Password",
+                reenter_new_password: "Re-enter new password",
+                set_new_password: "Set New Password",
+                chat_room: "💬 Social Chat Room",
+                logout: "Logout",
+                shared_microphone: "🎤 Shared Microphone",
+                inactive: "Inactive",
+                start_broadcast: "Start Broadcast",
+                stop_broadcast: "Stop Broadcast",
+                type_message: "Type your message here...",
+                footer_text: "This app was developed by",
+                welcome_message: "Welcome {name} to the chat room!",
+                login_success: "Logged in successfully!",
+                logout_success: "Logged out successfully",
+                fill_all_fields: "Please fill all fields",
+                phone_invalid: "Phone number must be valid",
+                password_short: "Password must be at least 6 characters",
+                passwords_not_match: "Passwords do not match",
+                phone_registered: "Phone number already registered",
+                no_pending_account: "No pending account for this number",
+                phone_not_registered: "Phone number not registered",
+                account_not_active: "Account not activated. Please activate your account first",
+                account_banned: "Account is banned",
+                wrong_password: "Wrong password",
+                account_locked: "Account temporarily locked due to multiple failed login attempts. Please try again later.",
+                no_verification_code: "No verification code sent for this number",
+                code_expired: "Verification code has expired",
+                too_many_attempts: "Too many attempts exceeded",
+                wrong_code: "Wrong verification code",
+                no_activation_data: "No activation data",
+                activation_success: "Account activated successfully! You can now login",
+                code_sent: "WhatsApp opened to send activation code",
+                code_resent: "WhatsApp opened to resend activation code",
+                reset_success: "New password set successfully",
+                password_strength: "Password strength:",
+                weak: "Weak",
+                medium: "Medium",
+                strong: "Strong"
+            }
+        };
+
+        // ======= قائمة رموز الدول =======
+        const countryCodes = [
+            { code: '+966', name: 'السعودية', flag: '🇸🇦' },
+            { code: '+971', name: 'الإمارات', flag: '🇦🇪' },
+            { code: '+965', name: 'الكويت', flag: '🇰🇼' },
+            { code: '+974', name: 'قطر', flag: '🇶🇦' },
+            { code: '+968', name: 'عمان', flag: '🇴🇲' },
+            { code: '+973', name: 'البحرين', flag: '🇧🇭' },
+            { code: '+20', name: 'مصر', flag: '🇪🇬' },
+            { code: '+212', name: 'المغرب', flag: '🇲🇦' },
+            { code: '+216', name: 'تونس', flag: '🇹🇳' },
+            { code: '+213', name: 'الجزائر', flag: '🇩🇿' },
+            { code: '+962', name: 'الأردن', flag: '🇯🇴' },
+            { code: '+963', name: 'سوريا', flag: '🇸🇾' },
+            { code: '+961', name: 'لبنان', flag: '🇱🇧' },
+            { code: '+970', name: 'فلسطين', flag: '🇵🇸' },
+            { code: '+964', name: 'العراق', flag: '🇮🇶' },
+            { code: '+967', name: 'اليمن', flag: '🇾🇪' },
+            { code: '+249', name: 'السودان', flag: '🇸🇩' },
+            { code: '+252', name: 'الصومال', flag: '🇸🇴' }
+        ];
+
+        // ======= نظام الأمان المتقدم =======
+        class SecurityManager {
+            constructor() {
+                this.verificationCodes = JSON.parse(localStorage.getItem('chatAppVerificationCodes')) || {};
+                this.failedAttempts = JSON.parse(localStorage.getItem('chatAppFailedAttempts')) || {};
+                this.sessions = JSON.parse(localStorage.getItem('chatAppSessions')) || {};
+                this.activityLog = JSON.parse(localStorage.getItem('chatAppActivityLog')) || [];
+            }
+
+            // إنشاء رمز تحقق آمن
+            generateSecureCode(length = 6) {
+                const chars = '0123456789';
+                let code = '';
+                for (let i = 0; i < length; i++) {
+                    code += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                return code;
+            }
+
+            // حفظ رمز التحقق
+            saveVerificationCode(phone, code, purpose = 'activation') {
+                const expiresAt = new Date();
+                expiresAt.setMinutes(expiresAt.getMinutes() + 10); // انتهاء الصلاحية بعد 10 دقائق
+                
+                this.verificationCodes[phone] = {
+                    code: code,
+                    purpose: purpose,
+                    expiresAt: expiresAt.toISOString(),
+                    attempts: 0
+                };
+                
+                this.saveData();
+                return code;
+            }
+
+            // التحقق من صحة الرمز
+            verifyCode(phone, code, purpose = 'activation') {
+                const stored = this.verificationCodes[phone];
+                
+                if (!stored) {
+                    return { success: false, message: 'no_verification_code' };
+                }
+                
+                if (stored.purpose !== purpose) {
+                    return { success: false, message: 'الغرض من الرمز غير صحيح' };
+                }
+                
+                if (new Date() > new Date(stored.expiresAt)) {
+                    delete this.verificationCodes[phone];
+                    this.saveData();
+                    return { success: false, message: 'code_expired' };
+                }
+                
+                if (stored.attempts >= 3) {
+                    delete this.verificationCodes[phone];
+                    this.saveData();
+                    return { success: false, message: 'too_many_attempts' };
+                }
+                
+                if (stored.code !== code) {
+                    stored.attempts++;
+                    this.saveData();
+                    return { success: false, message: 'wrong_code' };
+                }
+                
+                // نجاح التحقق - حذف الرمز المستخدم
+                delete this.verificationCodes[phone];
+                this.saveData();
+                
+                return { success: true, message: 'تم التحقق بنجاح' };
+            }
+
+            // تسجيل محاولة فاشلة
+            recordFailedAttempt(phone) {
+                if (!this.failedAttempts[phone]) {
+                    this.failedAttempts[phone] = {
+                        count: 0,
+                        lastAttempt: null,
+                        lockedUntil: null
+                    };
+                }
+                
+                const attempt = this.failedAttempts[phone];
+                attempt.count++;
+                attempt.lastAttempt = new Date().toISOString();
+                
+                // إذا تجاوز 5 محاولات فاشلة، قفل الحساب لمدة 15 دقيقة
+                if (attempt.count >= 5) {
+                    const lockUntil = new Date();
+                    lockUntil.setMinutes(lockUntil.getMinutes() + 15);
+                    attempt.lockedUntil = lockUntil.toISOString();
+                }
+                
+                this.saveData();
+            }
+
+            // التحقق من حالة القفل
+            isAccountLocked(phone) {
+                const attempt = this.failedAttempts[phone];
+                if (!attempt || !attempt.lockedUntil) return false;
+                
+                if (new Date() < new Date(attempt.lockedUntil)) {
+                    return true;
+                } else {
+                    // انتهت مدة القفل - إعادة تعيين
+                    delete this.failedAttempts[phone];
+                    this.saveData();
+                    return false;
+                }
+            }
+
+            // إعادة تعيين المحاولات الفاشلة
+            resetFailedAttempts(phone) {
+                delete this.failedAttempts[phone];
+                this.saveData();
+            }
+
+            // تسجيل نشاط
+            logActivity(phone, activity, details = {}) {
+                this.activityLog.unshift({
+                    phone: phone,
+                    activity: activity,
+                    details: details,
+                    timestamp: new Date().toISOString(),
+                    ip: this.generateMockIP()
+                });
+                
+                if (this.activityLog.length > 100) {
+                    this.activityLog = this.activityLog.slice(0, 100);
+                }
+                
+                this.saveData();
+            }
+
+            // توليد IP وهمي
+            generateMockIP() {
+                return `192.168.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
+            }
+
+            // حفظ البيانات
+            saveData() {
+                localStorage.setItem('chatAppVerificationCodes', JSON.stringify(this.verificationCodes));
+                localStorage.setItem('chatAppFailedAttempts', JSON.stringify(this.failedAttempts));
+                localStorage.setItem('chatAppSessions', JSON.stringify(this.sessions));
+                localStorage.setItem('chatAppActivityLog', JSON.stringify(this.activityLog));
+            }
+        }
+
+        // ======= نظام إرسال الرسائل عبر واتساب =======
+        class WhatsAppService {
+            constructor() {
+                this.sentMessages = JSON.parse(localStorage.getItem('chatAppWhatsAppMessages')) || [];
+            }
+
+            // إرسال رسالة واتساب تلقائية
+            async sendVerificationCode(userPhone, userName, code, purpose = 'تفعيل الحساب') {
+                const message = this.generateMessage(userName, code, purpose);
+                const whatsappUrl = `https://wa.me/${userPhone}?text=${encodeURIComponent(message)}`;
+                
+                return new Promise((resolve) => {
+                    const delay = Math.random() * 2000 + 1000;
+                    
+                    setTimeout(() => {
+                        // حفظ الرسالة المرسلة للسجلات
+                        this.sentMessages.unshift({
+                            to: userPhone,
+                            message: message,
+                            code: code,
+                            purpose: purpose,
+                            timestamp: new Date().toISOString(),
+                            status: 'sent'
+                        });
+                        
+                        if (this.sentMessages.length > 50) {
+                            this.sentMessages = this.sentMessages.slice(0, 50);
+                        }
+                        
+                        localStorage.setItem('chatAppWhatsAppMessages', JSON.stringify(this.sentMessages));
+                        
+                        // فتح واتساب في نافذة جديدة
+                        window.open(whatsappUrl, '_blank');
+                        
+                        console.log(`📱 تم فتح واتساب لإرسال رمز ${purpose} إلى ${userPhone}`);
+                        console.log(`🔢 الرمز: ${code}`);
+                        resolve(true);
+                    }, delay);
+                });
+            }
+
+            // إنشاء نص الرسالة
+            generateMessage(userName, code, purpose) {
+                const currentLang = getCurrentLanguage();
+                const purposes = {
+                    'activation': currentLang === 'ar' ? 'تفعيل الحساب' : 'Account Activation',
+                    'password_reset': currentLang === 'ar' ? 'إعادة تعيين كلمة المرور' : 'Password Reset'
+                };
+                
+                const purposeText = purposes[purpose] || purpose;
+                
+                if (currentLang === 'ar') {
+                    return `🔐 رمز التحقق ${purposeText}
+
+مرحباً ${userName}!
+
+لإكمال عملية ${purposeText}، يرجى استخدام رمز التحقق التالي:
+
+🔢 ${code}
+
+⏰ ينتهي صلاحية الرمز خلال 10 دقائق
+
+📍 تطبيق الدردشة الاجتماعية
+👨‍💻 المطور: عبد الوهاب الريمي
+
+⚠️ لا تشارك هذا الرمز مع أي شخص`;
+                } else {
+                    return `🔐 Verification Code ${purposeText}
+
+Hello ${userName}!
+
+To complete the ${purposeText} process, please use the following verification code:
+
+🔢 ${code}
+
+⏰ Code expires in 10 minutes
+
+📍 Social Chat App
+👨‍💻 Developer: Abdulwahab Al-Raimi
+
+⚠️ Do not share this code with anyone`;
+                }
+            }
+        }
+
+        // ======= نظام التسجيل المستقل =======
+        class UserManager {
+            constructor() {
+                this.users = JSON.parse(localStorage.getItem('chatAppUsers')) || {};
+                this.sessions = JSON.parse(localStorage.getItem('chatAppSessions')) || {};
+                this.pendingActivations = JSON.parse(localStorage.getItem('chatAppPendingActivations')) || {};
+            }
+
+            // حفظ البيانات في localStorage
+            saveData() {
+                localStorage.setItem('chatAppUsers', JSON.stringify(this.users));
+                localStorage.setItem('chatAppSessions', JSON.stringify(this.sessions));
+                localStorage.setItem('chatAppPendingActivations', JSON.stringify(this.pendingActivations));
+            }
+
+            // إنشاء حساب جديد
+            registerUser(name, phone, password, countryCode) {
+                const fullPhone = countryCode + phone;
+                
+                if (this.users[fullPhone]) {
+                    throw new Error('phone_registered');
+                }
+
+                const user = {
+                    id: this.generateUserId(),
+                    name: name,
+                    phone: fullPhone,
+                    password: this.hashPassword(password),
+                    countryCode: countryCode,
+                    isActive: false,
+                    isBanned: false,
+                    reports: 0,
+                    createdAt: new Date().toISOString(),
+                    lastSeen: new Date().toISOString(),
+                    settings: {
+                        twoFactorAuth: false,
+                        activityLog: true
+                    }
+                };
+
+                // حفظ كمستخدم معلق حتى التفعيل
+                this.pendingActivations[fullPhone] = {
+                    user: user,
+                    created: new Date().toISOString()
+                };
+
+                this.saveData();
+
+                return { fullPhone, name };
+            }
+
+            // تفعيل الحساب
+            activateUser(phone) {
+                const pendingUser = this.pendingActivations[phone];
+                if (!pendingUser) {
+                    throw new Error('no_pending_account');
+                }
+
+                // نقل المستخدم من المعلقين إلى المستخدمين النشطين
+                this.users[phone] = pendingUser.user;
+                this.users[phone].isActive = true;
+                
+                // حذف من المعلقين
+                delete this.pendingActivations[phone];
+                
+                this.saveData();
+
+                return this.users[phone];
+            }
+
+            // تسجيل الدخول
+            login(phone, password) {
+                const user = this.users[phone];
+                if (!user) {
+                    throw new Error('phone_not_registered');
+                }
+
+                if (!user.isActive) {
+                    throw new Error('account_not_active');
+                }
+
+                if (user.isBanned) {
+                    throw new Error('account_banned');
+                }
+
+                if (user.password !== this.hashPassword(password)) {
+                    throw new Error('wrong_password');
+                }
+
+                // إنشاء جلسة
+                const sessionId = this.generateSessionId();
+                this.sessions[sessionId] = {
+                    userId: user.id,
+                    phone: phone,
+                    loginTime: new Date().toISOString(),
+                    lastActivity: new Date().toISOString()
+                };
+
+                user.lastSeen = new Date().toISOString();
+                this.saveData();
+
+                return {
+                    sessionId: sessionId,
+                    user: user
+                };
+            }
+
+            // التحقق من الجلسة
+            verifySession(sessionId) {
+                const session = this.sessions[sessionId];
+                if (!session) return null;
+
+                const user = Object.values(this.users).find(u => u.phone === session.phone);
+                return user || null;
+            }
+
+            // تسجيل الخروج
+            logout(sessionId) {
+                delete this.sessions[sessionId];
+                this.saveData();
+            }
+
+            // تحديث إعدادات المستخدم
+            updateUserSettings(phone, settings) {
+                const user = this.users[phone];
+                if (!user) return false;
+
+                user.settings = { ...user.settings, ...settings };
+                this.saveData();
+                return true;
+            }
+
+            // حذف الحساب
+            deleteUser(phone) {
+                if (this.users[phone]) {
+                    delete this.users[phone];
+                    
+                    // حذف الجلسات المرتبطة بالمستخدم
+                    Object.keys(this.sessions).forEach(sessionId => {
+                        if (this.sessions[sessionId].phone === phone) {
+                            delete this.sessions[sessionId];
+                        }
+                    });
+                    
+                    this.saveData();
+                    return true;
+                }
+                return false;
+            }
+
+            // إنشاء معرف مستخدم فريد
+            generateUserId() {
+                return 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            }
+
+            // إنشاء معرف جلسة
+            generateSessionId() {
+                return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            }
+
+            // تشفير كلمة المرور
+            hashPassword(password) {
+                return btoa(password + 'chat_app_salt');
+            }
+
+            // التحقق من كلمة المرور
+            verifyPassword(password, hash) {
+                return this.hashPassword(password) === hash;
+            }
+
+            // إعادة تعيين كلمة المرور
+            resetPassword(phone, newPassword) {
+                const user = this.users[phone];
+                if (!user) return false;
+
+                user.password = this.hashPassword(newPassword);
+                this.saveData();
+                return true;
+            }
+
+            // الحصول على جميع المستخدمين
+            getAllUsers() {
+                return Object.values(this.users);
+            }
+
+            // الحصول على المستخدمين النشطين
+            getActiveUsers() {
+                return Object.values(this.users).filter(user => user.isActive);
+            }
+
+            // البحث عن مستخدم برقم الهاتف
+            findUserByPhone(phone) {
+                return this.users[phone] || null;
+            }
+        }
+
+        // ======= إعداد التطبيق =======
+        const userManager = new UserManager();
+        const securityManager = new SecurityManager();
+        const whatsappService = new WhatsAppService();
+
+        // العناصر الرئيسية في الواجهة
+        const authModal = document.getElementById('authModal');
+        const activationModal = document.getElementById('activationModal');
+        const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+        const chatContainer = document.getElementById('chatContainer');
+        const messagesContainer = document.getElementById('messages');
+        const messageInput = document.getElementById('messageInput');
+        const currentUserElement = document.getElementById('currentUser');
+        const userAvatar = document.getElementById('userAvatar');
+        const notification = document.getElementById('notification');
+
+        // متغيرات التطبيق
+        let currentUser = null;
+        let currentSessionId = null;
+        let pendingActivationData = null;
+        let countdownTimer = null;
+        let resetCountdownTimer = null;
+        let currentLanguage = 'ar'; // اللغة الافتراضية
+
+        // ======= نظام اللغات =======
+        function getCurrentLanguage() {
+            return currentLanguage;
+        }
+
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            document.documentElement.lang = lang;
+            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+            updateLanguageTexts();
+        }
+
+        function toggleLanguage() {
+            const newLang = currentLanguage === 'ar' ? 'en' : 'ar';
+            setLanguage(newLang);
+        }
+
+        function updateLanguageTexts() {
+            const langData = languageData[currentLanguage];
+            
+            // تحديث جميع العناصر التي تحتوي على data-lang
+            document.querySelectorAll('[data-lang]').forEach(element => {
+                const key = element.getAttribute('data-lang');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                }
+            });
+            
+            // تحديث العناصر التي تحتوي على data-lang-placeholder
+            document.querySelectorAll('[data-lang-placeholder]').forEach(element => {
+                const key = element.getAttribute('data-lang-placeholder');
+                if (langData[key]) {
+                    element.placeholder = langData[key];
+                }
+            });
+            
+            // تحديث النصوص الديناميكية
+            if (currentUser) {
+                currentUserElement.textContent = currentUser.name;
+                userAvatar.textContent = currentUser.name.charAt(0).toUpperCase();
+            }
+        }
+
+        // تهيئة رموز الدول
+        function initializeCountryCodes() {
+            const loginSelect = document.getElementById('loginCountryCode');
+            const registerSelect = document.getElementById('registerCountryCode');
+            const resetSelect = document.getElementById('resetCountryCode');
+            
+            countryCodes.forEach(country => {
+                const option1 = new Option(`${country.flag} ${country.name} (${country.code})`, country.code);
+                const option2 = new Option(`${country.flag} ${country.name} (${country.code})`, country.code);
+                const option3 = new Option(`${country.flag} ${country.name} (${country.code})`, country.code);
+                
+                loginSelect.add(option1);
+                registerSelect.add(option2);
+                resetSelect.add(option3);
+            });
+
+            // تعيين السعودية كافتراضي
+            loginSelect.value = '+966';
+            registerSelect.value = '+966';
+            resetSelect.value = '+966';
+        }
+
+        // التحقق من قوة كلمة المرور
+        function checkPasswordStrength(password) {
+            const strengthElement = document.getElementById('passwordStrength');
+            if (!password) {
+                strengthElement.textContent = '';
+                return;
+            }
+
+            let strength = 0;
+            let feedback = '';
+
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]/)) strength++;
+            if (password.match(/[A-Z]/)) strength++;
+            if (password.match(/[0-9]/)) strength++;
+            if (password.match(/[^a-zA-Z0-9]/)) strength++;
+
+            const langData = languageData[getCurrentLanguage()];
+            
+            switch(strength) {
+                case 0:
+                case 1:
+                case 2:
+                    feedback = langData.weak;
+                    strengthElement.className = 'password-strength strength-weak';
+                    break;
+                case 3:
+                case 4:
+                    feedback = langData.medium;
+                    strengthElement.className = 'password-strength strength-medium';
+                    break;
+                case 5:
+                    feedback = langData.strong;
+                    strengthElement.className = 'password-strength strength-strong';
+                    break;
+            }
+
+            strengthElement.textContent = `${langData.password_strength} ${feedback}`;
+        }
+
+        // ======= التبديل بين تسجيل الدخول والتسجيل =======
+        function switchAuthTab(tab) {
+            const loginTab = document.getElementById('loginTab');
+            const registerTab = document.getElementById('registerTab');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            
+            if (tab === 'login') {
+                loginTab.classList.add('active');
+                registerTab.classList.remove('active');
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+            } else {
+                registerTab.classList.add('active');
+                loginTab.classList.remove('active');
+                registerForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+            }
+        }
+
+        // ======= إنشاء حساب جديد =======
+        async function register() {
+            const name = document.getElementById('registerName').value.trim();
+            const phone = document.getElementById('registerPhone').value.trim();
+            const countryCode = document.getElementById('registerCountryCode').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (!name || !phone || !password) {
+                showNotification('fill_all_fields', 'error');
+                return;
+            }
+
+            if (phone.length < 7) {
+                showNotification('phone_invalid', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showNotification('password_short', 'error');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showNotification('passwords_not_match', 'error');
+                return;
+            }
+
+            try {
+                const { fullPhone, name: userName } = userManager.registerUser(name, phone, password, countryCode);
+                pendingActivationData = { fullPhone, userName };
+
+                // إنشاء وإرسال رمز التفعيل عبر واتساب
+                const activationCode = securityManager.generateSecureCode();
+                securityManager.saveVerificationCode(fullPhone, activationCode, 'activation');
+                
+                // إرسال الرمز تلقائياً عبر واتساب
+                await whatsappService.sendVerificationCode(fullPhone, userName, activationCode, 'activation');
+                
+                // الانتقال إلى نموذج التفعيل
+                authModal.classList.add('hidden');
+                activationModal.classList.remove('hidden');
+                
+                // بدء العد التنازلي
+                startCountdown(60, 'resendCodeBtn', 'timer');
+                
+                showNotification('code_sent', 'success');
+
+            } catch (error) {
+                showNotification(error.message, 'error');
+            }
+        }
+
+        // ======= تفعيل الحساب =======
+        function activateAccount() {
+            const activationInput = document.getElementById('activationInput').value.replace(/\s/g, '');
+            
+            if (!activationInput || activationInput.length !== 6) {
+                showNotification('enter_activation_code', 'error');
+                return;
+            }
+
+            if (!pendingActivationData) {
+                showNotification('no_activation_data', 'error');
+                return;
+            }
+
+            try {
+                const verification = securityManager.verifyCode(pendingActivationData.fullPhone, activationInput, 'activation');
+                
+                if (!verification.success) {
+                    showNotification(verification.message, 'error');
+                    return;
+                }
+
+                const user = userManager.activateUser(pendingActivationData.fullPhone);
+                
+                // تسجيل النشاط
+                securityManager.logActivity(pendingActivationData.fullPhone, 'account_activated');
+                
+                showNotification('activation_success', 'success');
+                
+                // العودة إلى تسجيل الدخول
+                activationModal.classList.add('hidden');
+                authModal.classList.remove('hidden');
+                switchAuthTab('login');
+                
+                // تنظيف الحقول
+                document.getElementById('registerName').value = '';
+                document.getElementById('registerPhone').value = '';
+                document.getElementById('registerPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+                pendingActivationData = null;
+
+            } catch (error) {
+                showNotification(error.message, 'error');
+            }
+        }
+
+        // ======= إعادة إرسال رمز التفعيل =======
+        async function resendActivationCode() {
+            if (!pendingActivationData) {
+                showNotification('no_activation_data', 'error');
+                return;
+            }
+
+            try {
+                const activationCode = securityManager.generateSecureCode();
+                securityManager.saveVerificationCode(pendingActivationData.fullPhone, activationCode, 'activation');
+                
+                await whatsappService.sendVerificationCode(
+                    pendingActivationData.fullPhone, 
+                    pendingActivationData.userName, 
+                    activationCode, 
+                    'activation'
+                );
+                
+                // إعادة بدء العد التنازلي
+                startCountdown(60, 'resendCodeBtn', 'timer');
+                
+                showNotification('code_resent', 'success');
+            } catch (error) {
+                showNotification('فشل في إعادة إرسال الرمز', 'error');
+            }
+        }
+
+        // ======= تسجيل الدخول =======
+        async function login() {
+            const phone = document.getElementById('loginPhone').value.trim();
+            const countryCode = document.getElementById('loginCountryCode').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!phone || !password) {
+                showNotification('fill_all_fields', 'error');
+                return;
+            }
+
+            const fullPhone = countryCode + phone;
+
+            // التحقق من حالة القفل
+            if (securityManager.isAccountLocked(fullPhone)) {
+                showNotification('account_locked', 'error');
+                return;
+            }
+
+            try {
+                const result = userManager.login(fullPhone, password);
+                
+                currentUser = result.user;
+                currentSessionId = result.sessionId;
+
+                // إعادة تعيين المحاولات الفاشلة
+                securityManager.resetFailedAttempts(fullPhone);
+                
+                // تسجيل النشاط
+                securityManager.logActivity(fullPhone, 'login_success');
+                
+                currentUserElement.textContent = currentUser.name;
+                userAvatar.textContent = currentUser.name.charAt(0).toUpperCase();
+                
+                authModal.classList.add('hidden');
+                chatContainer.classList.remove('hidden');
+                
+                const welcomeMessage = languageData[getCurrentLanguage()].welcome_message.replace('{name}', currentUser.name);
+                addSystemMessage(welcomeMessage);
+                
+                messageInput.focus();
+                
+                showNotification('login_success', 'success');
+
+                // تحميل الرسائل
+                loadMessages();
+
+            } catch (error) {
+                // تسجيل محاولة فاشلة
+                securityManager.recordFailedAttempt(fullPhone);
+                securityManager.logActivity(fullPhone, 'login_failed', { reason: error.message });
+                
+                showNotification(error.message, 'error');
+            }
+        }
+
+        // ======= إعادة تعيين كلمة المرور =======
+        function showForgotPassword() {
+            authModal.classList.add('hidden');
+            forgotPasswordModal.classList.remove('hidden');
+            // إعادة تعيين الحقول
+            document.getElementById('resetStep1').classList.remove('hidden');
+            document.getElementById('resetStep2').classList.add('hidden');
+            document.getElementById('resetPhone').value = '';
+        }
+
+        async function sendPasswordResetCode() {
+            const phone = document.getElementById('resetPhone').value.trim();
+            const countryCode = document.getElementById('resetCountryCode').value;
+            const fullPhone = countryCode + phone;
+
+            if (!phone) {
+                showNotification('fill_all_fields', 'error');
+                return;
+            }
+
+            // التحقق من وجود المستخدم
+            const user = userManager.findUserByPhone(fullPhone);
+            if (!user) {
+                showNotification('phone_not_registered', 'error');
+                return;
+            }
+
+            try {
+                const resetCode = securityManager.generateSecureCode();
+                securityManager.saveVerificationCode(fullPhone, resetCode, 'password_reset');
+                
+                await whatsappService.sendVerificationCode(fullPhone, user.name, resetCode, 'password_reset');
+                
+                // الانتقال إلى الخطوة الثانية
+                document.getElementById('resetStep1').classList.add('hidden');
+                document.getElementById('resetStep2').classList.remove('hidden');
+                
+                // بدء العد التنازلي
+                startResetCountdown(60, 'resendResetCodeBtn', 'resetTimer');
+                
+                showNotification('code_sent', 'success');
+            } catch (error) {
+                showNotification('فشل في إرسال رمز التحقق', 'error');
+            }
+        }
+
+        async function resendResetCode() {
+            const phone = document.getElementById('resetPhone').value.trim();
+            const countryCode = document.getElementById('resetCountryCode').value;
+            const fullPhone = countryCode + phone;
+
+            // التحقق من وجود المستخدم
+            const user = userManager.findUserByPhone(fullPhone);
+            if (!user) {
+                showNotification('phone_not_registered', 'error');
+                return;
+            }
+
+            try {
+                const resetCode = securityManager.generateSecureCode();
+                securityManager.saveVerificationCode(fullPhone, resetCode, 'password_reset');
+                
+                await whatsappService.sendVerificationCode(fullPhone, user.name, resetCode, 'password_reset');
+                
+                // إعادة بدء العد التنازلي
+                startResetCountdown(60, 'resendResetCodeBtn', 'resetTimer');
+                
+                showNotification('code_resent', 'success');
+            } catch (error) {
+                showNotification('فشل في إعادة إرسال الرمز', 'error');
+            }
+        }
+
+        function resetPassword() {
+            const phone = document.getElementById('resetPhone').value.trim();
+            const countryCode = document.getElementById('resetCountryCode').value;
+            const fullPhone = countryCode + phone;
+            const resetCode = document.getElementById('resetCode').value.replace(/\s/g, '');
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+
+            if (!resetCode || resetCode.length !== 6) {
+                showNotification('enter_activation_code', 'error');
+                return;
+            }
+
+            if (!newPassword || newPassword.length < 6) {
+                showNotification('password_short', 'error');
+                return;
+            }
+
+            if (newPassword !== confirmNewPassword) {
+                showNotification('passwords_not_match', 'error');
+                return;
+            }
+
+            try {
+                const verification = securityManager.verifyCode(fullPhone, resetCode, 'password_reset');
+                
+                if (!verification.success) {
+                    showNotification(verification.message, 'error');
+                    return;
+                }
+
+                // تحديث كلمة المرور
+                userManager.resetPassword(fullPhone, newPassword);
+                
+                // تسجيل النشاط
+                securityManager.logActivity(fullPhone, 'password_reset');
+                
+                showNotification('reset_success', 'success');
+                
+                // العودة إلى تسجيل الدخول
+                forgotPasswordModal.classList.add('hidden');
+                authModal.classList.remove('hidden');
+                switchAuthTab('login');
+                
+                // تنظيف الحقول
+                document.getElementById('resetPhone').value = '';
+                document.getElementById('resetCode').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmNewPassword').value = '';
+
+            } catch (error) {
+                showNotification(error.message, 'error');
+            }
+        }
+
+        // ======= دوال المساعدة =======
+        function startCountdown(seconds, buttonId, timerId) {
+            const button = document.getElementById(buttonId);
+            const timerElement = document.getElementById(timerId);
+            
+            button.disabled = true;
+            
+            let remaining = seconds;
+            
+            if (countdownTimer) clearInterval(countdownTimer);
+            
+            countdownTimer = setInterval(() => {
+                remaining--;
+                if (timerElement) timerElement.textContent = remaining;
+                
+                if (remaining <= 0) {
+                    clearInterval(countdownTimer);
+                    button.disabled = false;
+                    if (timerElement) timerElement.textContent = '0';
+                }
+            }, 1000);
+        }
+
+        function startResetCountdown(seconds, buttonId, timerId) {
+            const button = document.getElementById(buttonId);
+            const timerElement = document.getElementById(timerId);
+            
+            button.disabled = true;
+            
+            let remaining = seconds;
+            
+            if (resetCountdownTimer) clearInterval(resetCountdownTimer);
+            
+            resetCountdownTimer = setInterval(() => {
+                remaining--;
+                if (timerElement) timerElement.textContent = remaining;
+                
+                if (remaining <= 0) {
+                    clearInterval(resetCountdownTimer);
+                    button.disabled = false;
+                    if (timerElement) timerElement.textContent = '0';
+                }
+            }, 1000);
+        }
+
+        function formatActivationCode(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value.length > 6) value = value.substring(0, 6);
+            
+            // تنسيق الرمز مع مسافات
+            let formatted = '';
+            for (let i = 0; i < value.length; i++) {
+                if (i > 0 && i % 3 === 0) formatted += ' ';
+                formatted += value[i];
+            }
+            
+            input.value = formatted;
+        }
+
+        function formatResetCode(input) {
+            formatActivationCode(input);
+        }
+
+        function showNotification(messageKey, type = '') {
+            const notification = document.getElementById('notification');
+            const langData = languageData[getCurrentLanguage()];
+            
+            let message = langData[messageKey] || messageKey;
+            notification.textContent = message;
+            notification.className = 'notification';
+            notification.classList.add('show');
+            
+            if (type) {
+                notification.classList.add(type);
+            }
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+
+        // ======= دوال الدردشة الأساسية =======
+        function sendMessage() {
+            const text = messageInput.value.trim();
+            if (!text) return;
+            
+            if (!currentUser) {
+                showNotification('يجب تسجيل الدخول أولاً', 'error');
+                return;
+            }
+
+            // حفظ الرسالة في localStorage
+            const message = {
+                id: 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                type: 'text',
+                content: text,
+                sender: currentUser.name,
+                senderPhone: currentUser.phone,
+                timestamp: new Date().toISOString()
+            };
+
+            saveMessage(message);
+            displayMessage(message);
+            messageInput.value = '';
+            scrollToBottom();
+        }
+
+        function saveMessage(message) {
+            const messages = JSON.parse(localStorage.getItem('chatAppMessages')) || [];
+            messages.push(message);
+            localStorage.setItem('chatAppMessages', JSON.stringify(messages));
+        }
+
+        function loadMessages() {
+            const messages = JSON.parse(localStorage.getItem('chatAppMessages')) || [];
+            messagesContainer.innerHTML = '';
+            
+            messages.forEach(msg => {
+                displayMessage(msg);
+            });
+            
+            scrollToBottom();
+        }
+
+        function displayMessage(msg) {
+            const div = document.createElement('div');
+            
+            if (msg.type === 'system') {
+                div.classList.add('message', 'system');
+                div.style.background = 'var(--warning)';
+                div.style.alignSelf = 'center';
+                div.style.maxWidth = '90%';
+                div.style.textAlign = 'center';
+                div.style.fontSize = '0.9rem';
+                div.style.color = '#000';
+                div.textContent = msg.content;
+            } else {
+                const isCurrentUser = currentUser && msg.senderPhone === currentUser.phone;
+                div.classList.add('message', isCurrentUser ? 'sent' : 'received');
+                
+                if (msg.type === 'text') {
+                    div.textContent = msg.content;
+                }
+                
+                const messageInfo = document.createElement('div');
+                messageInfo.classList.add('message-info');
+                
+                const senderSpan = document.createElement('span');
+                senderSpan.textContent = msg.sender;
+                
+                const timeSpan = document.createElement('span');
+                timeSpan.textContent = formatTime(new Date(msg.timestamp));
+                
+                messageInfo.appendChild(senderSpan);
+                messageInfo.appendChild(timeSpan);
+                div.appendChild(messageInfo);
+            }
+            
+            messagesContainer.appendChild(div);
+        }
+
+        function addSystemMessage(content) {
+            const systemMessage = {
+                id: 'sys_' + Date.now(),
+                type: 'system',
+                content: content,
+                timestamp: new Date().toISOString()
+            };
+            saveMessage(systemMessage);
+            displayMessage(systemMessage);
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
+            setTimeout(() => {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 100);
+        }
+
+        function formatTime(date) {
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / (3600000 * 24));
+            
+            if (diffMins < 1) return 'الآن';
+            if (diffMins < 60) return `منذ ${diffMins} دقيقة`;
+            if (diffHours < 24) return `منذ ${diffHours} ساعة`;
+            if (diffDays < 7) return `منذ ${diffDays} يوم`;
+            
+            return date.toLocaleDateString('ar-EG', {
+                day: '2-digit',
+                month: '2-digit',
+                year: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+
+        function logout() {
+            if (currentSessionId) {
+                userManager.logout(currentSessionId);
+            }
+            
+            currentUser = null;
+            currentSessionId = null;
+            
+            chatContainer.classList.add('hidden');
+            authModal.classList.remove('hidden');
+            messagesContainer.innerHTML = '';
+            
+            document.getElementById('loginPhone').value = '';
+            document.getElementById('loginPassword').value = '';
+            
+            showNotification('logout_success', 'success');
+        }
+
+        // ======= تحسين تجربة المستخدم =======
+        window.addEventListener('load', () => {
+            console.log('✅ التطبيق جاهز للاستخدام');
+            console.log('📱 نظام إرسال الرموز عبر واتساب تلقائي');
+            console.log('👨‍💻 تم التطوير بواسطة: عبد الوهاب الريمي');
+            initializeCountryCodes();
+            setLanguage('ar'); // تعيين اللغة الافتراضية
+            showNotification('مرحباً بك في تطبيق الدردشة!', 'success');
+        });
+
+        // التركيز على حقل الاسم عند التحميل
+        document.getElementById('registerName').focus();
+    </script>
+</body>
+</html>

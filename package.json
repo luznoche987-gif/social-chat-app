@@ -1,0 +1,17 @@
+{
+  "name": "social-chat-app",
+  "version": "1.0.0",
+  "description": "تطبيق الدردشة الاجتماعية - تم التطوير بواسطة عبد الوهاب الريمي",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": ["chat", "social", "arabic", "دردشة"],
+  "author": "عبد الوهاب الريمي",
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^4.4.5"
+  }
+}
